@@ -1,46 +1,38 @@
-const express = require('express')
-const  cors  = require ( ' cors ' )
+/** @format */
 
-const {conectarBD}= require('../database/conexion.js')
+const express = require("express");
+const cors = require("cors");
 
-const rutas=require('../routes/rutas.js')
+const { conectarBD } = require("../database/conexion.js");
 
-class ServidorModelo{
+const rutas = require("../routes/rutas.js");
 
-    constructor(){
+class ServidorModelo {
+  constructor() {
+    this.app = express();
+    this.despertarBD();
+    this.llamarAuxiliares();
+    this.enrutarPeticiones();
+  }
 
-        this.app = express()
-        this.despertarBD()
-        this.llamarAuxiliares()
-        this.enrutarPeticiones()
+  despertarServidor() {
+    this.app.listen(process.env.PORT, function () {
+      console.log("Servidor encendido..." + process.env.PORT);
+    });
+  }
 
-    }
+  enrutarPeticiones() {
+    this.app.use("/", rutas);
+  }
 
-    despertarServidor(){
+  despertarBD() {
+    conectarBD();
+  }
 
-        this.app.listen(process.env.PORT,function(){
-            console.log("Servidor encendido..."+process.env.PORT)
-        })
-    }
-
-    enrutarPeticiones(){
-
-        this.app.use('/',rutas)
-
-    }
-
-    despertarBD(){
-
-        conectarBD()
-
-    }
-
-    llamarAuxiliares(){
-
-            this.app.use(express.json())
-            this.app.use(cors())
-
-    }
+  llamarAuxiliares() {
+    this.app.use(express.json());
+    this.app.use(cors());
+  }
 }
 
-module.exports=ServidorModelo
+module.exports = ServidorModelo;
